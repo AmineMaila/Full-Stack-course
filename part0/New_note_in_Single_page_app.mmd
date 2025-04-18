@@ -1,0 +1,8 @@
+sequenceDiagram
+    participant browser
+    participant server
+
+    Note right of browser: the browser executes javascript to package a new note as JSON
+    browser->>server: POST https://studies.cs.helsinki.fi/exampleapp/new_note_spa
+    Note right of browser: the server creates a new note in its database
+    Note right of browser: the browser rerenders the page with the locally updated notes
