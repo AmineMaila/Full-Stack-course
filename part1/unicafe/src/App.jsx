@@ -4,13 +4,18 @@ const Button = ({onClick, text}) => <><button onClick={onClick}>{text}</button><
 
 const StatisticLine = ({text, value}) => {
 	return (
-		<div>{text} {value}</div>
+		<>
+			<tr>
+				<td>{text}</td>
+				<td>{value}</td>
+			</tr>
+		</>
 	)
 }
 
 const Statistics = ({good, neutral, bad}) => {
 	const total = good + neutral + bad
-	
+
 	// prevents NaN when dividing by 0
 	const average = total == 0 ? 0 : (good - bad) / total
 	const positive = total == 0 ? 0 : (good / total) * 100
@@ -18,12 +23,16 @@ const Statistics = ({good, neutral, bad}) => {
 	if (good || bad || neutral){
 		return (
 			<div>
-				<StatisticLine text="good" value={good}/>
-				<StatisticLine text="neutral" value={neutral}/>
-				<StatisticLine text="bad" value={bad}/>
-				<StatisticLine text="all" value={total}/>
-				<StatisticLine text="average" value={average}/>
-				<StatisticLine text="positive" value={positive}/>
+				<table>
+					<tbody>
+						<StatisticLine text="good" value={good}/>
+						<StatisticLine text="neutral" value={neutral}/>
+						<StatisticLine text="bad" value={bad}/>
+						<StatisticLine text="all" value={total}/>
+						<StatisticLine text="average" value={average}/>
+						<StatisticLine text="positive" value={positive.toString() + ' %'}/>
+					</tbody>
+				</table>
 			</div>
 		)
 	} else {
