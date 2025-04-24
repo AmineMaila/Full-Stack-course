@@ -1,9 +1,39 @@
 import { useState } from 'react'
 
-const Numbers = ({ person }) => {
+const Person = ({ person }) => <p>{person.name} {person.number}</p>
+
+const Persons = ({ persons , filter }) => {
+
+	const filteredPersons = filter.trim() === ''
+		? persons
+		: persons.filter(
+			(person) => (
+				person.name.toLowerCase().includes(filter.toLowerCase().trim())
+			))
+
 	return (
 		<div>
-			<p>{person.name} {person.number}</p>
+			{filteredPersons.map((person) => (
+				<Person key={person.name} person={person}/>
+			))}
+		</div>
+	)
+}
+
+const Search = ({ filter, onChange }) => {
+	return (
+		<div>filter shown with <input value={filter} onChange={onChange}/></div>
+	)
+}
+
+const PersonForm = (props) => {
+	return (
+		<div>
+			<form>
+					<div>name: <input value={props.name} onChange={props.onNameChange} /></div>
+					<div>number: <input value={props.number} onChange={props.onNumChange} /></div>
+					<div><button type="submit" onClick={props.addPerson}>add</button></div>
+			</form>
 		</div>
 	)
 }
@@ -18,13 +48,8 @@ const App = () => {
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
   const [filter, setFilter] = useState('')
-	
-	const filteredPersons = filter.trim() === ''
-		? persons
-		: persons.filter((person) => person.name.toLowerCase().includes(filter.toLowerCase().trim()))
 
 	const handleFilterChange = (event) => {
-		
 		setFilter(event.target.value)
 	}
 
@@ -61,15 +86,17 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
-			<div>filter shown with <input value={filter} onChange={handleFilterChange}/></div>
+			<Search filter={filter} onChange={handleFilterChange} />
 			<h2>add a new</h2>
-      <form>
-        <div>name: <input value={newName} onChange={handleNameChange} /></div>
-				<div>number: <input value={newNumber} onChange={handleNumChange} /></div>
-        <div><button type="submit" onClick={addPerson}>add</button></div>
-      </form>
+			<PersonForm
+				name={newName}
+				number={newNumber}
+				onNameChange={handleNameChange}
+				onNumChange={handleNumChange}
+				addPerson={addPerson}
+			/>
       <h2>Numbers</h2>
-      {filteredPersons.map((person) => <Numbers key={person.name} person={person}/>)}
+			<Persons persons={persons} filter={filter} />
     </div>
   )
 }
