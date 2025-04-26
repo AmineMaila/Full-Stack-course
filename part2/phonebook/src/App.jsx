@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import personsServices from './services/persons'
 import axios from 'axios'
 
 const Person = ({ person }) => <p>{person.name} {person.number}</p>
@@ -46,13 +47,8 @@ const App = () => {
   const [filter, setFilter] = useState('')
 
 	useEffect(() => {
-		console.log('effects')
-		axios
-			.get('http://localhost:3001/persons')
-			.then((response) => {
-				console.log('got response', response)
-				setPersons(response.data)
-			})
+		personsServices.getAll()
+			.then((initialPersons) => setPersons(initialPersons))
 			.catch((error) => console.log('Error: ', error))
 	}, [])
 
@@ -84,10 +80,19 @@ const App = () => {
 			alert(`${trimmedNewName} is already added to phonebook`)
 			return;
 		}
-		const personObj = {name: trimmedNewName, number: newNumber, id: persons.length + 1}
-		setPersons(persons.concat(personObj))
-		setNewName('')
-		setNewNumber('')
+		const personObj = {
+			name: trimmedNewName,
+			number: newNumber,
+			id: persons.length + 1
+		}
+
+		personsServices.create(personObj)
+			.then((returnedPerson) => {
+				setPersons(persons.concat(returnedPerson))
+				setNewName('')
+				setNewNumber('')
+			})
+			.catch(() => alert(`Could not create entry for ${personObj.name} on the server`))
 	}
 
   return (
