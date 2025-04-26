@@ -5,7 +5,7 @@ const Person = ({ person, deletePerson }) => {
 	return (
 		<div>
 			{person.name} {person.number}
-			<button onClick={() => deletePerson(person.id)}>delete</button>
+			<button onClick={() => deletePerson(person)}>delete</button>
 		</div>
 		
 	)
@@ -53,7 +53,6 @@ const App = () => {
   const [newNumber, setNewNumber] = useState('')
   const [filter, setFilter] = useState('')
 
-	console.log(persons)
 	useEffect(() => {
 		personsServices.getAll()
 			.then((initialPersons) => setPersons(initialPersons))
@@ -84,43 +83,47 @@ const App = () => {
 			return;
 		}
 
-		if (persons.find((p) => trimmedNewName === p.name)){
-			alert(`${trimmedNewName} is already added to phonebook`)
+		const matchedPerson = persons.find((p) => trimmedNewName === p.name)
+		if (matchedPerson) {
+			if (confirm(`${matchedPerson.name} is already added to phonebook, replace the old number with the new one ?`)) {
+				const updatedPerson = {...matchedPerson, number: trimmedNewNum}
+				personsServices.update(updatedPerson.id, updatedPerson)
+					.then((returnedPerson) => {
+						setPersons(persons.map(p => p.id !== returnedPerson.id ? p : returnedPerson))
+						setNewName('')
+						setNewNumber('')
+					})
+					.catch(() => alert(`Failed updating ${newPerson.name}'s number`))
+			}
 			return;
 		}
-		
-		const personObj = {
+
+
+		const newPerson = {
 			name: trimmedNewName,
-			number: newNumber,
+			number: trimmedNewNum,
 			id: (persons.length + 1).toString()
 		}
-
-		personsServices.create(personObj)
+		personsServices.create(newPerson)
 			.then((returnedPerson) => {
 				setPersons(persons.concat(returnedPerson))
 				setNewName('')
 				setNewNumber('')
 			})
-			.catch(() => alert(`Could not create entry for ${personObj.name} on the server`))
+			.catch(() => alert(`Could not create entry for ${newPerson.name}`))
 	}
 
-	const deletePerson = (id) => {
-		
-		personsServices.remove(id)
-			.then(() => {
-				setPersons(persons.filter(n => n.id !== id))
-				console.log(persons)
-			})
-			.catch(() => {
-				console.log(`couldn't delete ${persons.find(n => n.id === id).name}`)
-			})
-
-		// if (persons.find(n => n.id === id) !== undefined) {
-
-		// } else {
-		// 	alert('person doesn\'t exist on the database')
-		// 	persons.map(n => n.id !== id)
-		// }
+	const deletePerson = (person) => {
+		if (confirm(`Delete ${person.name} ?`)){
+			personsServices.remove(person.id)
+				.then(() => {
+					setPersons(persons.filter(n => n.id !== person.id))
+					console.log(persons)
+				})
+				.catch(() => {
+					console.log(`couldn't delete ${person}`)
+				})
+		}
 	}
 
   return (
