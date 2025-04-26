@@ -18,5 +18,12 @@ const create = (newPerson) => {
 	)
 }
 
+const remove = (id) => {
+	return (
+		axios
+			.delete(`${baseUrl}/${id}`)
+	)
+}
 
-export default { getAll, create }
+
+export default { getAll, create, remove }

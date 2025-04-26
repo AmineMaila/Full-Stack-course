@@ -1,10 +1,17 @@
 import { useEffect, useState } from 'react'
 import personsServices from './services/persons'
-import axios from 'axios'
 
-const Person = ({ person }) => <p>{person.name} {person.number}</p>
+const Person = ({ person, deletePerson }) => {
+	return (
+		<div>
+			{person.name} {person.number}
+			<button onClick={() => deletePerson(person.id)}>delete</button>
+		</div>
+		
+	)
+}
 
-const Persons = ({ persons , filter }) => {
+const Persons = ({ persons ,deletePerson ,filter }) => {
 
 	const filteredPersons = filter.trim() === ''
 		? persons
@@ -16,7 +23,7 @@ const Persons = ({ persons , filter }) => {
 	return (
 		<div>
 			{filteredPersons.map((person) => (
-				<Person key={person.name} person={person}/>
+				<Person key={person.name} deletePerson={deletePerson} person={person}/>
 			))}
 		</div>
 	)
@@ -46,6 +53,7 @@ const App = () => {
   const [newNumber, setNewNumber] = useState('')
   const [filter, setFilter] = useState('')
 
+	console.log(persons)
 	useEffect(() => {
 		personsServices.getAll()
 			.then((initialPersons) => setPersons(initialPersons))
@@ -80,10 +88,11 @@ const App = () => {
 			alert(`${trimmedNewName} is already added to phonebook`)
 			return;
 		}
+		
 		const personObj = {
 			name: trimmedNewName,
 			number: newNumber,
-			id: persons.length + 1
+			id: (persons.length + 1).toString()
 		}
 
 		personsServices.create(personObj)
@@ -93,6 +102,25 @@ const App = () => {
 				setNewNumber('')
 			})
 			.catch(() => alert(`Could not create entry for ${personObj.name} on the server`))
+	}
+
+	const deletePerson = (id) => {
+		
+		personsServices.remove(id)
+			.then(() => {
+				setPersons(persons.filter(n => n.id !== id))
+				console.log(persons)
+			})
+			.catch(() => {
+				console.log(`couldn't delete ${persons.find(n => n.id === id).name}`)
+			})
+
+		// if (persons.find(n => n.id === id) !== undefined) {
+
+		// } else {
+		// 	alert('person doesn\'t exist on the database')
+		// 	persons.map(n => n.id !== id)
+		// }
 	}
 
   return (
@@ -108,7 +136,7 @@ const App = () => {
 				addPerson={addPerson}
 			/>
       <h2>Numbers</h2>
-			<Persons persons={persons} filter={filter} />
+			<Persons persons={persons} deletePerson={deletePerson} filter={filter} />
     </div>
   )
 }
