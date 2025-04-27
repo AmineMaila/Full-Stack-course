@@ -64,12 +64,23 @@ const App = () => {
   const [newNumber, setNewNumber] = useState('')
   const [filter, setFilter] = useState('')
   const [successMessage, setSuccessMessage] = useState(null)
+  const [errorMessage, setErrorMessage] = useState(null)
 
 	useEffect(() => {
 		personsServices.getAll()
 			.then((initialPersons) => setPersons(initialPersons))
-			.catch((error) => console.log('Error: ', error))
+			.catch((error) => {
+				displayNotification(setErrorMessage, 'Failed to fetch data from the server')
+				console.log('Error: ', error)
+			})
 	}, [])
+
+	const displayNotification = (setNotif, msg) => {
+		setNotif(msg)
+		setTimeout(() => {
+			setNotif(null)
+		}, 5000)
+	}
 
 	const handleFilterChange = (event) => {
 		setFilter(event.target.value)
@@ -101,15 +112,15 @@ const App = () => {
 				const updatedPerson = {...matchedPerson, number: trimmedNewNum}
 				personsServices.update(updatedPerson.id, updatedPerson)
 					.then((returnedPerson) => {
-						setSuccessMessage(`${returnedPerson.name}'s number has been changed successfully!`)
-						setTimeout(() => {
-							setSuccessMessage(null)
-						}, 5000)
+						displayNotification(setSuccessMessage, `${returnedPerson.name}'s number has been changed successfully!`)
 						setPersons(persons.map(p => p.id !== returnedPerson.id ? p : returnedPerson))
 						setNewName('')
 						setNewNumber('')
 					})
-					.catch(() => alert(`Failed updating ${returnedPerson.name}'s number`))
+					.catch(() => {
+						displayNotification(setErrorMessage, `Information of ${updatedPerson.name} has already been removed from the server`)
+						setPersons(persons.filter(p => p.id !== updatedPerson.id))
+					})
 			}
 			return;
 		}
@@ -122,15 +133,14 @@ const App = () => {
 		}
 		personsServices.create(newPerson)
 			.then((returnedPerson) => {
-				setSuccessMessage(`Added ${newPerson.name}`)
-				setTimeout(() => {
-					setSuccessMessage(null)
-				}, 5000)
+				displayNotification(setSuccessMessage, `Added ${newPerson.name}`)
 				setPersons(persons.concat(returnedPerson))
 				setNewName('')
 				setNewNumber('')
 			})
-			.catch(() => alert(`Could not create entry for ${newPerson.name}`))
+			.catch(() => {
+				displayNotification(setErrorMessage, `Could not create entry for ${newPerson.name}`)
+			})
 	}
 
 	const deletePerson = (person) => {
@@ -141,7 +151,7 @@ const App = () => {
 					setPersons(persons.filter(n => n.id !== person.id))
 				})
 				.catch(() => {
-					console.log(`couldn't delete ${person}`)
+					displayNotification(setErrorMessage, `Failed removing ${person}`)
 				})
 		}
 	}
@@ -149,7 +159,8 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
-			<Notification className="success-notification" message={successMessage} />
+			<Notification className="success notification" message={successMessage} />
+			<Notification className="error notification" message={errorMessage} />
 			<Search filter={filter} onChange={handleFilterChange} />
 			<h2>add a new</h2>
 			<PersonForm
