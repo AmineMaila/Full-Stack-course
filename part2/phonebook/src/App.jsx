@@ -47,11 +47,23 @@ const PersonForm = (props) => {
 	)
 }
 
+const Notification = ({ className, message }) => {
+	if (message === null)
+		return (null)
+
+	return (
+		<div className={className}>
+			{message}
+		</div>
+	)
+}
+
 const App = () => {
   const [persons, setPersons] = useState([])
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
   const [filter, setFilter] = useState('')
+  const [successMessage, setSuccessMessage] = useState(null)
 
 	useEffect(() => {
 		personsServices.getAll()
@@ -89,11 +101,15 @@ const App = () => {
 				const updatedPerson = {...matchedPerson, number: trimmedNewNum}
 				personsServices.update(updatedPerson.id, updatedPerson)
 					.then((returnedPerson) => {
+						setSuccessMessage(`${returnedPerson.name}'s number has been changed successfully!`)
+						setTimeout(() => {
+							setSuccessMessage(null)
+						}, 5000)
 						setPersons(persons.map(p => p.id !== returnedPerson.id ? p : returnedPerson))
 						setNewName('')
 						setNewNumber('')
 					})
-					.catch(() => alert(`Failed updating ${newPerson.name}'s number`))
+					.catch(() => alert(`Failed updating ${returnedPerson.name}'s number`))
 			}
 			return;
 		}
@@ -106,6 +122,10 @@ const App = () => {
 		}
 		personsServices.create(newPerson)
 			.then((returnedPerson) => {
+				setSuccessMessage(`Added ${newPerson.name}`)
+				setTimeout(() => {
+					setSuccessMessage(null)
+				}, 5000)
 				setPersons(persons.concat(returnedPerson))
 				setNewName('')
 				setNewNumber('')
@@ -117,8 +137,8 @@ const App = () => {
 		if (confirm(`Delete ${person.name} ?`)){
 			personsServices.remove(person.id)
 				.then(() => {
-					setPersons(persons.filter(n => n.id !== person.id))
 					console.log(persons)
+					setPersons(persons.filter(n => n.id !== person.id))
 				})
 				.catch(() => {
 					console.log(`couldn't delete ${person}`)
@@ -129,6 +149,7 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
+			<Notification className="success-notification" message={successMessage} />
 			<Search filter={filter} onChange={handleFilterChange} />
 			<h2>add a new</h2>
 			<PersonForm
