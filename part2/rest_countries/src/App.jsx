@@ -1,7 +1,7 @@
 import axios from 'axios'
 import { useEffect, useState } from 'react'
 
-const DisplayCountry = ({ country }) => {
+const DisplayView = ({ country }) => {
 	return (
 		<div className='country'>
 			<h1>{country.name.common}</h1>
@@ -20,9 +20,26 @@ const DisplayCountry = ({ country }) => {
 	)
 }
 
-const DisplayName = ({ countryName }) => {
+const Country = ({ country }) => {
+	const [showView, setShowView] = useState(false)
+
+	return (
+		<div>
+			{country.name.common}
+			<button onClick={() => setShowView(!showView)}>{showView ? 'hide' : 'show'}</button>
+			{showView && <DisplayView country={country} />}
+		</div>
+	)
+}
+
+const ListCountries = ({ countries }) => {
+
 	return ( 
-		<>{countryName}<br /></>
+		countries.map(country => {
+			return (
+				<Country key={country.name.common} country={country} />
+			)
+		})
 	)
 }
 
@@ -30,11 +47,11 @@ const Display = ({ data }) => {
 
 	if (data.length > 1 && data.length <= 10){
 		return (
-			data.map(country => <DisplayName key={country.name.common} countryName={country.name.common}/>)
+			<ListCountries countries={data}/>
 		)
 	} else if (data.length === 1) {
 		return (
-			<DisplayCountry country={data[0]} />
+			<DisplayView country={data[0]} />
 		)
 	} else {
 		return (
