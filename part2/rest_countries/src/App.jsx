@@ -1,9 +1,46 @@
 import axios from 'axios'
 import { useEffect, useState } from 'react'
 
-const DisplayView = ({ country }) => {
+const WEATHER_API_KEY = import.meta.env.VITE_WEATHER_API_KEY
+
+const Weather = ({ capital }) => {
+	const [weatherData, setWeatherData] = useState(null)
+	const [error, setError] = useState(null)
+
+	useEffect(() => {
+		if (!capital)
+			return
+
+		setError(null)
+		setWeatherData(null)
+
+		axios
+			.get(`https://api.weatherapi.com/v1/current.json?key=${WEATHER_API_KEY}&q=${capital}`)
+			.then((response) => {
+				setWeatherData(response.data)
+			})
+			.catch(error => setError(error))
+	}, [capital])
+
+	if (error)
+		return (<p>Failed to load weather: {error.message}</p>)
+
+	if (!weatherData)
+		return (<p>Loading weather data for {capital}...</p>)
+
 	return (
-		<div className='country'>
+		<div className='weather'>
+			<h1>Weather in {capital}</h1>
+			<p>Temperture {weatherData.current.temp_c} Celsius</p>
+			<img alt="weather icon" src={weatherData.current.condition.icon} />
+			<p>Wind {(weatherData.current.wind_kph / 3.6).toFixed(1)} m/s</p>
+		</div>
+	)
+}
+
+const View = ({ country }) => {
+	return (
+		<div>
 			<h1>{country.name.common}</h1>
 			<p>
 				Capital {country.capital}<br />
@@ -16,6 +53,16 @@ const DisplayView = ({ country }) => {
 				))}
 			</ul>
 			<img alt={country.flags.alt} src={country.flags.svg} width={200}/>
+		</div>
+	)
+}
+
+const DisplayView = ({ country }) => {
+
+	return (
+		<div className='country-view'>
+			<View country={country} />
+			<Weather capital={country.capital} />
 		</div>
 	)
 }
@@ -62,31 +109,40 @@ const Display = ({ data }) => {
 
 const App = () => {
 	const [filter, setFilter] = useState('')
-	const [countries, setCountries] = useState([])
+	const [countries, setCountries] = useState(null)
 	const [filteredCountries, setFilteredCountries] = useState([])
-
+	const [error, setError] = useState(null)
+	
 	useEffect(() => {
 		axios
 			.get('https://studies.cs.helsinki.fi/restcountries/api/all')
 			.then((response) => {
+				setError(null)
 				setCountries(response.data)
 			})
 			.catch((error) => {
 				console.log(error)
+				setError(error)
 			})
 	}, [])
 
 	const handleChange = (event) => {
 		event.preventDefault()
-		setFilter(event.target.value)
 		if (countries.length !== 0)
 		{
 			setFilteredCountries(
 				countries.filter(obj => (
 					obj.name.common.toLowerCase().includes(event.target.value.toLowerCase())
-				)))
+			)))
 		}
+		setFilter(event.target.value)
 	}
+
+	if (!countries)
+			return (<p>Loading countries data...</p>)
+
+	if (error)
+		return (<p>Failed to fetch countries data: {error.message}</p>)
 
   return (
     <>
