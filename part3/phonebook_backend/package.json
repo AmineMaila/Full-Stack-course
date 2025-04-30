@@ -1,0 +1,19 @@
+{
+  "name": "phonebook_backend",
+  "version": "0.0.1",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "dev": "node --watch index.js",
+    "test": "echo \"Error: not test specified\""
+  },
+  "author": "Amine Maila",
+  "license": "MIT",
+  "description": "backend for the phonebook app",
+  "dependencies": {
+    "express": "^5.1.0"
+  },
+  "devDependencies": {
+    "@types/lodash": "^4.17.16"
+  }
+}
