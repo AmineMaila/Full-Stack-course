@@ -3,7 +3,7 @@ Content-Type: application/json
 Transfer-Encoding: chunked
 
 {
-	"name": "Amine Maila",
+	"name": "Amine Mail",
 	"number": "0649853153"
 }
 

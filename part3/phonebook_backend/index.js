@@ -53,18 +53,21 @@ app.get('/api/persons/:id', (req, res) => {
 app.post('/api/persons', (req, res) => {
 	const {name, number} = req.body
 
-	if (!name || !number){
-		res.status(400).json({
-			error: "content missing"
-		})
+	if (!name)
+		res.status(400).json({error: "name is missing"})
+	else if (!number)
+		res.status(400).json({error: "number is missing"})
+	else if (people.find(person => person.name === name))
+		res.status(400).json({error: "name must be unique"})
+	else {
+		const person = {
+			id: String(Math.floor(Math.random() * 10000)),
+			name: name,
+			number: number
+		}
+		people.push(person)
+		res.status(201).json(person)
 	}
-	const person = {
-		id: String(Math.floor(Math.random() * 10000)),
-		name: name,
-		number: number
-	}
-	people.push(person)
-	res.status(201).json(person)
 })
 
 app.delete('/api/persons/:id', (req, res) => {
