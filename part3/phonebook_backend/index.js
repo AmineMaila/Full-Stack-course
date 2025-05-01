@@ -40,6 +40,27 @@ app.get('/info', (req, res) => {
 	res.send(payload)
 })
 
+app.get('/api/persons/:id', (req, res) => {
+	const id = req.params.id
+
+	const person = people.find(person => person.id === id)
+	if (person) {
+		res.json(person)
+	} else
+		res.status(404).end()
+})
+
+app.delete('/api/persons/:id', (req, res) => {
+	const id = req.params.id
+
+	const indexOfObj = people.findIndex(person => person.id === id)
+	if (indexOfObj !== -1) {
+		people.splice(indexOfObj, 1)
+		res.status(204).end()
+	} else
+		res.status(404).end()
+})
+
 const PORT = 3001
 
 app.listen(PORT, () => {
