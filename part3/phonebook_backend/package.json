@@ -12,9 +12,11 @@
   "description": "backend for the phonebook app",
   "dependencies": {
     "express": "^5.1.0",
+    "mongoose": "^8.14.1",
     "morgan": "^1.10.0"
   },
   "devDependencies": {
-    "@types/lodash": "^4.17.16"
+    "@types/lodash": "^4.17.16",
+    "@types/mongoose": "^5.11.96"
   }
 }
