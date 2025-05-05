@@ -7,7 +7,6 @@ const app = express()
 app.use(express.json())
 app.use(express.static('dist'))
 
-
 morgan.token('body', (req, res) => {
 	return (JSON.stringify(req.body))
 })
@@ -48,16 +47,20 @@ app.post('/api/persons', (req, res) => {
 		res.status(400).json({error: "name is missing"})
 	else if (!number)
 		res.status(400).json({error: "number is missing"})
-	else if (people.find(person => person.name === name))
-		res.status(400).json({error: "name must be unique"})
+	// else if (people.find(person => person.name === name))
+	// 	res.status(400).json({error: "name must be unique"})
 	else {
-		const person = {
-			id: String(Math.floor(Math.random() * 10000)),
+		const person = new Person({
 			name: name,
 			number: number
-		}
-		people.push(person)
-		res.status(201).json(person)
+		})
+		person.save()
+			.then(result => {
+				res.status(201).json(result)
+			})
+			.catch(err => {
+				res.status(500).end(JSON.stringify({error: err.message}))
+			})
 	}
 })
 
