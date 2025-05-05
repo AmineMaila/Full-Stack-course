@@ -11,15 +11,21 @@ morgan.token('body', (req, res) => {
 	return (JSON.stringify(req.body))
 })
 
+const errorHandler = (error, req, res, next) => {
+	console.log(error.message)
+	if (error.name === 'CastError') {
+		res.status(400).send({error: "malformed id"})
+	}
+}
+
 app.use(morgan(':method :url :status :res[content-length] - :response-time ms :body'))
 
-app.get('/api/persons', (req, res) => {
+app.get('/api/persons', (req, res, next) => {
 	Person.find({})
 		.then(people => {
-			console.log(people)
 			res.json(people)
 		})
-		.catch(error => {res.status(500).end()})
+		.catch(error => next(error))
 })
 
 app.get('/info', (req, res) => {
@@ -31,7 +37,7 @@ app.get('/info', (req, res) => {
 	res.send(payload)
 })
 
-app.get('/api/persons/:id', (req, res) => {
+app.get('/api/persons/:id', (req, res, next) => {
 	const id = req.params.id
 
 	const person = people.find(person => person.id === id)
@@ -65,7 +71,7 @@ app.post('/api/persons', (req, res) => {
 	}
 })
 
-app.delete('/api/persons/:id', (req, res) => {
+app.delete('/api/persons/:id', (req, res, next) => {
 	Person.findByIdAndDelete(req.params.id)
 		.then((result) => {
 			if (!result)
@@ -73,11 +79,10 @@ app.delete('/api/persons/:id', (req, res) => {
 			else
 				res.status(204).end()
 			})
-		.catch(err => {
-			console.log(err)
-			res.status(500).end()
-		})
+		.catch(error => next(error))
 })
+
+app.use(errorHandler)
 
 const PORT = process.env.PORT || 3001
 
