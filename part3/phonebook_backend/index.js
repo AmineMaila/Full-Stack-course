@@ -30,21 +30,27 @@ app.get('/api/persons', (req, res, next) => {
 
 app.get('/info', (req, res) => {
 	const time = new Date()
-
-	const payload = `
-		<p>Phonebook has info for ${people.length} people</p>
-		<p>${time}</p>`
-	res.send(payload)
+	Person.countDocuments()
+		.then(size => {
+			const payload = `
+				<p>Phonebook has info for ${size} people</p>
+				<p>${time}</p>`
+			res.send(payload)
+		})
+		.catch(err => {
+			console.log(err.message)
+			res.status(500).end()
+		})
 })
 
 app.get('/api/persons/:id', (req, res, next) => {
-	const id = req.params.id
-
-	const person = people.find(person => person.id === id)
-	if (person) {
-		res.json(person)
-	} else
-		res.status(404).end()
+	Person.findById(req.params.id)
+		.then(person => {
+			if (!person)
+				return res.status(404).end()
+			res.json(person)
+		})
+		.catch(error => next(error))
 })
 
 app.post('/api/persons', (req, res) => {
@@ -54,8 +60,6 @@ app.post('/api/persons', (req, res) => {
 		res.status(400).json({error: "name is missing"})
 	else if (!number)
 		res.status(400).json({error: "number is missing"})
-	// else if (people.find(person => person.name === name))
-	// 	res.status(400).json({error: "name must be unique"})
 	else {
 		const person = new Person({
 			name: name,
@@ -69,6 +73,20 @@ app.post('/api/persons', (req, res) => {
 				res.status(500).end()
 			})
 	}
+})
+
+app.put('/api/persons/:id', (req, res, next) => {
+	const { number } = req.body
+
+	Person.findById(req.params.id)
+		.then(person => {
+			if (!person)
+				return res.status(404).end()
+
+			person.number = number
+			person.save().then(result => res.json(result))
+		})
+		.catch(error => next(error))
 })
 
 app.delete('/api/persons/:id', (req, res, next) => {
