@@ -16,9 +16,10 @@ app.use(morgan(':method :url :status :res[content-length] - :response-time ms :b
 app.get('/api/persons', (req, res) => {
 	Person.find({})
 		.then(people => {
+			console.log(people)
 			res.json(people)
 		})
-		.catch(error => {res.status(500).end(JSON.stringify({error: error.message}))})
+		.catch(error => {res.status(500).end()})
 })
 
 app.get('/info', (req, res) => {
@@ -59,20 +60,23 @@ app.post('/api/persons', (req, res) => {
 				res.status(201).json(result)
 			})
 			.catch(err => {
-				res.status(500).end(JSON.stringify({error: err.message}))
+				res.status(500).end()
 			})
 	}
 })
 
 app.delete('/api/persons/:id', (req, res) => {
-	const id = req.params.id
-
-	const indexOfObj = people.findIndex(person => person.id === id)
-	if (indexOfObj !== -1) {
-		people.splice(indexOfObj, 1)
-		res.status(204).end()
-	} else
-		res.status(404).end()
+	Person.findByIdAndDelete(req.params.id)
+		.then((result) => {
+			if (!result)
+				res.status(404).end()
+			else
+				res.status(204).end()
+			})
+		.catch(err => {
+			console.log(err)
+			res.status(500).end()
+		})
 })
 
 const PORT = process.env.PORT || 3001
