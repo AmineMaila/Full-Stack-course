@@ -5,7 +5,8 @@
   "scripts": {
     "start": "node index.js",
     "dev": "node --watch index.js",
-    "test": "echo \"Error: not test specified\""
+    "test": "echo \"Error: not test specified\"",
+		"lint": "eslint ."
   },
   "author": "Amine Maila",
   "license": "MIT",
@@ -17,7 +18,11 @@
     "morgan": "^1.10.0"
   },
   "devDependencies": {
+    "@eslint/js": "^9.26.0",
+    "@stylistic/eslint-plugin-js": "^4.2.0",
     "@types/lodash": "^4.17.16",
-    "@types/mongoose": "^5.11.96"
+    "@types/mongoose": "^5.11.96",
+    "eslint": "^9.26.0",
+    "globals": "^16.0.0"
   }
 }
