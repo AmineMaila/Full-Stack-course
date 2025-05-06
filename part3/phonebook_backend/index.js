@@ -15,7 +15,12 @@ const errorHandler = (error, req, res, next) => {
 	console.log(error.message)
 	if (error.name === 'CastError') {
 		res.status(400).send({error: "malformed id"})
+	} else if (error.name === 'ValidationError') {
+		res.status(400).send({error: error.message})
+	} else {
+		res.status(500).end()
 	}
+	next(error)
 }
 
 app.use(morgan(':method :url :status :res[content-length] - :response-time ms :body'))
@@ -28,7 +33,7 @@ app.get('/api/persons', (req, res, next) => {
 		.catch(error => next(error))
 })
 
-app.get('/info', (req, res) => {
+app.get('/info', (req, res, next) => {
 	const time = new Date()
 	Person.countDocuments()
 		.then(size => {
@@ -37,10 +42,7 @@ app.get('/info', (req, res) => {
 				<p>${time}</p>`
 			res.send(payload)
 		})
-		.catch(err => {
-			console.log(err.message)
-			res.status(500).end()
-		})
+		.catch(err => next(err))
 })
 
 app.get('/api/persons/:id', (req, res, next) => {
@@ -53,7 +55,7 @@ app.get('/api/persons/:id', (req, res, next) => {
 		.catch(error => next(error))
 })
 
-app.post('/api/persons', (req, res) => {
+app.post('/api/persons', (req, res, next) => {
 	const {name, number} = req.body
 
 	if (!name)
@@ -69,9 +71,7 @@ app.post('/api/persons', (req, res) => {
 			.then(result => {
 				res.status(201).json(result)
 			})
-			.catch(err => {
-				res.status(500).end()
-			})
+			.catch(err => next(err))
 	}
 })
 

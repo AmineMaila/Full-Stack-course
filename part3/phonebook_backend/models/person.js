@@ -45,7 +45,10 @@ connectWithRetries()
 mongoose.set('strictQuery', false) // when set to false means you can query documents that don't follow the schema
 
 const personSchema = new mongoose.Schema({
-	name: String,
+	name: {
+		type: String,
+		minLength: 3,
+	},
 	number: String,
 })
 
