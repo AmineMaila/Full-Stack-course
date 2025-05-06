@@ -12,14 +12,13 @@ morgan.token('body', (req, res) => {
 })
 
 const errorHandler = (error, req, res, next) => {
-	console.log(error.message)
 	if (error.name === 'CastError') {
-		res.status(400).send({error: "malformed id"})
+		return (res.status(400).send({error: "malformed id"}))
 	} else if (error.name === 'ValidationError') {
-		res.status(400).send({error: error.message})
-	} else {
-		res.status(500).end()
+		return (res.status(400).send({error: error.message}))
 	}
+
+	console.log(error.message)
 	next(error)
 }
 
@@ -58,21 +57,15 @@ app.get('/api/persons/:id', (req, res, next) => {
 app.post('/api/persons', (req, res, next) => {
 	const {name, number} = req.body
 
-	if (!name)
-		res.status(400).json({error: "name is missing"})
-	else if (!number)
-		res.status(400).json({error: "number is missing"})
-	else {
-		const person = new Person({
-			name: name,
-			number: number
+	const person = new Person({
+		name: name,
+		number: number
+	})
+	person.save()
+		.then(result => {
+			res.status(201).json(result)
 		})
-		person.save()
-			.then(result => {
-				res.status(201).json(result)
-			})
-			.catch(err => next(err))
-	}
+		.catch(err => next(err))
 })
 
 app.put('/api/persons/:id', (req, res, next) => {
@@ -84,7 +77,9 @@ app.put('/api/persons/:id', (req, res, next) => {
 				return res.status(404).end()
 
 			person.number = number
-			person.save().then(result => res.json(result))
+			person.save()
+				.then(result => res.json(result))
+				.catch(error => next(error))
 		})
 		.catch(error => next(error))
 })
