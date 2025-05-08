@@ -1,0 +1,9 @@
+POST http://localhost:3003/api/blogs
+Content-Type: application/json
+
+{
+	"title": "Javascript Event Loop",
+	"author": "Amine Maila",
+	"url": "http://localhost:3003/Amine%27s_blog",
+	"likes": 0
+}
