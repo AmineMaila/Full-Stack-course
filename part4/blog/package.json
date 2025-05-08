@@ -4,7 +4,7 @@
   "description": "Blog list",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no tests found\"",
+    "test": "node --test",
     "dev": "node --watch index.js",
     "start": "node index.js"
   },
