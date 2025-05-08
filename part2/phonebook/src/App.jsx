@@ -138,8 +138,11 @@ const App = () => {
 				setNewName('')
 				setNewNumber('')
 			})
-			.catch(() => {
-				displayNotification(setErrorMessage, `Could not create entry for ${newPerson.name}`)
+			.catch((error) => {
+				if (error.response && error.response.status === 400)
+					displayNotification(setErrorMessage, error.response.data.error)
+				else
+					displayNotification(setErrorMessage, error.message)
 			})
 	}
 
