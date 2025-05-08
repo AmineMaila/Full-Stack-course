@@ -2,8 +2,8 @@ POST http://localhost:3003/api/blogs
 Content-Type: application/json
 
 {
-	"title": "Javascript Event Loop",
-	"author": "Amineer",
-	"url": "http://localhost:3003/Am%27s_blog",
+	"title": "HTTP cycle",
+	"author": "AmineMaila",
+	"url": "https://pine-meat-103.notion.site/Walkthrough-of-HTTPS-request-and-response-14abc3b09421804e92b3f2f4764c97c6?pvs=4",
 	"likes": 0
 }
