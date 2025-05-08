@@ -18,8 +18,29 @@ const favoriteBlog = (blogs) => {
 	return (favorite)
 }
 
+const mostBlogs = (blogs) => {
+	const authors = {}
+	for (const blog of blogs) {
+		if (blog.author in authors)
+			authors[blog.author]++
+		else
+			authors[blog.author] = 1
+	}
+
+	const most = { author:'', blogs: 0 }
+	for (const author in authors) {
+		if (authors[author] > most.blogs) {
+			most.author = author
+			most.blogs = authors[author]
+		}
+	}
+	
+	return (most)
+}
+
 module.exports = {
   dummy,
 	totalLikes,
-	favoriteBlog
+	favoriteBlog,
+	mostBlogs
 }
