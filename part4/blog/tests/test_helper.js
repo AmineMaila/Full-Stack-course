@@ -56,7 +56,13 @@ const initBlogs = async () => {
 	await Blog.insertMany(initialBlogs)
 }
 
+const oneBlog = async () => {
+	const blog = await Blog.findOne()
+	return (blog.toJSON())
+}
+
 module.exports = {
 	initBlogs,
-	initialBlogs
+	initialBlogs,
+	oneBlog
 }

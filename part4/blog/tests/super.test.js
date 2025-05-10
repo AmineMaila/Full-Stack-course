@@ -1,9 +1,10 @@
 const supertest = require('supertest')
 const app = require('../app')
+const Blog = require('../models/blog')
 const assert = require('node:assert')
 const { test, after, beforeEach } = require('node:test')
 const mongoose = require('mongoose')
-const { initBlogs, initialBlogs } = require('./test_helper')
+const { initBlogs, initialBlogs, oneBlog } = require('./test_helper')
 
 const api = supertest(app)
 
@@ -85,6 +86,15 @@ test('missing title or url results in 400 bad request', async () => {
 	await api.post('/api/blogs')
 		.send(blogMissingUrl)
 		.expect(400)
+})
+
+test('deleting a blog by id succeeds', async () => {
+	const blog = await oneBlog()
+
+	await api.delete(`/api/blogs/${blog.id}`)
+		.expect(204)
+
+	assert.strictEqual(await Blog.findById(blog.id), null)
 })
 
 after(() => {
