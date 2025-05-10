@@ -68,6 +68,25 @@ test('likes property defaults to 0 if not passed', async () => {
 	assert.strictEqual(response.body.likes, 0)
 })
 
+test('missing title or url results in 400 bad request', async () => {
+	const blogMissingTitle = {
+		author: "AmineMaila",
+		url: "https://pine-meat-103.notion.site/Walkthrough-of-HTTPS-request-and-response-14abc3b09421804e92b3f2f4764c97c6?pvs=4"
+	}
+	const blogMissingUrl = {
+		title: "HTTP cycle",
+		author: "AmineMaila",
+	}
+
+	await api.post('/api/blogs')
+		.send(blogMissingTitle)
+		.expect(400)
+
+	await api.post('/api/blogs')
+		.send(blogMissingUrl)
+		.expect(400)
+})
+
 after(() => {
 	mongoose.connection.close()
 })
