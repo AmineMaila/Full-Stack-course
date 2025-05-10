@@ -53,6 +53,21 @@ test('blog created successfully to database', async () => {
 	assert.strictEqual(blogs.body.length, initialBlogs.length + 1)
 })
 
+test('likes property defaults to 0 if not passed', async () => {
+	const blog = {
+		title: "HTTP cycle",
+		author: "AmineMaila",
+		url: "https://pine-meat-103.notion.site/Walkthrough-of-HTTPS-request-and-response-14abc3b09421804e92b3f2f4764c97c6?pvs=4"
+	}
+
+	const response = await api.post('/api/blogs')
+		.send(blog)
+		.expect(201)
+		.expect('Content-Type', /application\/json/)
+
+	assert.strictEqual(response.body.likes, 0)
+})
+
 after(() => {
 	mongoose.connection.close()
 })

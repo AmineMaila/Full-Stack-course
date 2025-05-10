@@ -12,7 +12,14 @@ blogsRouter.get('/', async (req, res, next) => {
 })
 
 blogsRouter.post('/', async (req, res, next) => {
-	const blog = new Blog(req.body)
+	const { title, author, url, likes } = req.body
+
+	const blog = new Blog({
+		title: title,
+		author: author,
+		url: url,
+		likes: likes ? likes : 0
+	})
 
 	try {
 		const result = await blog.save()
