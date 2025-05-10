@@ -97,6 +97,22 @@ test('deleting a blog by id succeeds', async () => {
 	assert.strictEqual(await Blog.findById(blog.id), null)
 })
 
+test('updating a blog by id succeeds', async () => {
+	const blog = await oneBlog()
+
+	await api.put(`/api/blogs/${blog.id}`)
+		.send({
+			title: blog.title,
+			author: blog.author,
+			url: blog.url,
+			likes: 500,
+		})
+		.expect(204)
+
+	const resultBlog = await Blog.findById(blog.id)
+	assert.strictEqual(resultBlog.likes, 500)
+})
+
 after(() => {
 	mongoose.connection.close()
 })
