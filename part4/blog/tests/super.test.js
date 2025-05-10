@@ -19,6 +19,14 @@ test('returned blogs are the expected length', async () => {
 	assert.strictEqual(response.body.length, initialBlogs.length)
 })
 
+test('returned blog has property id not _id', async () => {
+	const response = await api.get('/api/blogs')
+		.expect(200)
+		.expect('Content-Type', /application\/json/)
+
+	assert(response.body[0].hasOwnProperty('id') && !response.body[0].hasOwnProperty('_id'))
+})
+
 after(() => {
 	mongoose.connection.close()
 })
