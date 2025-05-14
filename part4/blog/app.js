@@ -5,7 +5,7 @@ const logger = require('./utils/logger')
 const blogsRouter = require('./controllers/blogs')
 const usersRouter = require('./controllers/users')
 const loginRouter = require('./controllers/login')
-const { errorHandler, requestLogger, unknownEndpoint } = require('./utils/middleware')
+const mid = require('./utils/middleware')
 
 const app = express()
 
@@ -17,13 +17,14 @@ mongoose.connect(config.MONGODB_URI)
 	})
 
 app.use(express.json())
-app.use(requestLogger)
+app.use(mid.requestLogger)
+app.use(mid.extractAuthToken)
 
 app.use('/api/login', loginRouter)
 app.use('/api/users', usersRouter)
 app.use('/api/blogs', blogsRouter)
 
-app.use(unknownEndpoint)
-app.use(errorHandler)
+app.use(mid.unknownEndpoint)
+app.use(mid.errorHandler)
 
 module.exports = app

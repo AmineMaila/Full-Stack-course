@@ -28,8 +28,11 @@ blogsRouter.post('/', async (req, res, next) => {
 		return res.status(400).end()
 
 	try {
-		const decodedToken = jwt.verify(extractToken(req), SECRET)
-
+		if (!req.token)
+			return (res.status(400).json({ error: 'authorization header missing' }))
+		const decodedToken = jwt.verify(req.token, SECRET)
+		if (!decodedToken)
+			return (res.status(401).end())
 		const user = await User.findById(decodedToken.id)
 
 		const blog = new Blog({
