@@ -1,4 +1,5 @@
 const Blog = require('../models/blog')
+const User = require('../models/user')
 
 const initialBlogs = [
 	{
@@ -51,9 +52,28 @@ const initialBlogs = [
 	}
 ]
 
+
+const initialUsers = [
+	{
+		name: "ARON",
+		username: "aaron",
+		password: "aaron222",
+	},
+	{
+		name: "ARON2",
+		username: "aaron2",
+		password: "aaron2223",
+	}
+]
+
 const initBlogs = async () => {
 	await Blog.deleteMany({})
 	await Blog.insertMany(initialBlogs)
+}
+
+const initUsers = async () => {
+	await User.deleteMany({})
+	await User.insertMany(initialUsers)
 }
 
 const oneBlog = async () => {
@@ -64,5 +84,6 @@ const oneBlog = async () => {
 module.exports = {
 	initBlogs,
 	initialBlogs,
-	oneBlog
+	oneBlog,
+	initUsers
 }

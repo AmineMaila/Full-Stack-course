@@ -1,15 +1,17 @@
 const supertest = require('supertest')
 const app = require('../app')
 const Blog = require('../models/blog')
+const User = require('../models/user')
 const assert = require('node:assert')
 const { test, after, beforeEach } = require('node:test')
 const mongoose = require('mongoose')
-const { initBlogs, initialBlogs, oneBlog } = require('./test_helper')
+const { initBlogs, initialBlogs, oneBlog, initUsers } = require('./test_helper')
 
 const api = supertest(app)
 
 beforeEach( async () => {
 	await initBlogs()
+	await initUsers()
 })
 
 test('returned blogs are the expected length', async () => {
@@ -111,6 +113,50 @@ test('updating a blog by id succeeds', async () => {
 
 	const resultBlog = await Blog.findById(blog.id)
 	assert.strictEqual(resultBlog.likes, 500)
+})
+
+test('creating user fails if username already exists', async () => {
+	const newUser = {
+		name: 'Nama',
+		username: 'aaron',
+		password: 'aaa111'
+	}
+
+	const response = await api.post(`/api/users/`)
+		.send(newUser)
+		.expect(400)
+
+	assert.strictEqual(response.body.error, 'username must be unique')
+})
+
+test('creating user fails if username length is less than 3', async () => {
+	const newUser = {
+		name: 'Nama',
+		username: 'aa',
+		password: 'aaa111'
+	}
+
+	const response = await api.post(`/api/users/`)
+		.send(newUser)
+		.expect(400)
+
+	
+	assert.strictEqual(response.body.error, 'User validation failed: username: username should be at least 3 characters long')
+})
+
+test('creating user fails if password length is less than 3', async () => {
+	const newUser = {
+		name: 'Nama',
+		username: 'aawwwaa',
+		password: 'aa'
+	}
+
+	const response = await api.post(`/api/users/`)
+		.send(newUser)
+		.expect(400)
+
+	
+	assert.strictEqual(response.body.error, 'password should be at least 3 characters long')
 })
 
 after(() => {

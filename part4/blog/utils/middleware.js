@@ -13,10 +13,14 @@ const errorHandler = (err, req, res, next) => {
 	logger.error(err)
 
 	if (err.name === 'CastError') {
-		return res.status(400).send({error: "invalid input (place_holder)"})
+		return res.status(400).json({ error: 'invalid input (place_holder)' })
+	} else if (err.name === 'ValidationError') {
+		return res.status(400).json({ error: err.message })
+	} else if (err.code === 11000) {
+		return res.status(400).json({ error: 'username must be unique'})
 	}
 
-	next(error)
+	next(err)
 }
 
 const unknownEndpoint = (req, res) => {
