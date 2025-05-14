@@ -4,7 +4,7 @@ const bcrypt = require('bcrypt')
 
 usersRouter.get('/', async (req, res, next) => {
 	try {
-		const users = await User.find({})
+		const users = await User.find({}).populate('blogs', { url: 1, title: 1, author: 1 })
 		res.json(users)
 	}
 	catch (e) {
@@ -32,6 +32,16 @@ usersRouter.post('/', async (req, res, next) => {
 
 		const result = await user.save()
 		res.status(201).json(result)
+	}
+	catch (e) {
+		next(e)
+	}
+})
+
+usersRouter.delete('/:username', async (req, res, next) => {
+	try {
+		await User.findOneAndDelete({ username: req.params.username })
+		res.status(204).end()
 	}
 	catch (e) {
 		next(e)
