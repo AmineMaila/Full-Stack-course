@@ -66,14 +66,13 @@ const initialUsers = [
 	}
 ]
 
-const initBlogs = async () => {
+const initBlogs = async (user) => {
 	await Blog.deleteMany({})
-	await Blog.insertMany(initialBlogs)
-}
+	initialBlogs.forEach(blog => {
+		blog.user = user.id
+	})
 
-const initUsers = async () => {
-	await User.deleteMany({})
-	await User.insertMany(initialUsers)
+	await Blog.insertMany(initialBlogs)
 }
 
 const oneBlog = async () => {
@@ -84,6 +83,6 @@ const oneBlog = async () => {
 module.exports = {
 	initBlogs,
 	initialBlogs,
+	initialUsers,
 	oneBlog,
-	initUsers
 }

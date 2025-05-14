@@ -23,13 +23,13 @@ blogsRouter.post('/', authTokenExtractor, userExtractor, async (req, res, next) 
 			title: title,
 			author: author,
 			url: url,
-			likes: likes ? likes : 0,
+			likes: likes || 0,
 			user: req.user._id
 		})
 
 		const result = await blog.save()
 		req.user.blogs.push(blog._id)
-		req.user.save()
+		await req.user.save()
 		res.status(201).json(result)
 	}
 	catch (e) {
