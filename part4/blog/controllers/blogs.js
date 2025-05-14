@@ -29,7 +29,7 @@ blogsRouter.post('/', async (req, res, next) => {
 
 	try {
 		if (!req.token)
-			return (res.status(400).json({ error: 'authorization header missing' }))
+			return (res.status(400).json({ error: 'Auth token missing' }))
 		const decodedToken = jwt.verify(req.token, SECRET)
 		if (!decodedToken)
 			return (res.status(401).end())
@@ -55,8 +55,20 @@ blogsRouter.post('/', async (req, res, next) => {
 
 blogsRouter.delete('/:id', async (req, res, next) => {
 	try {
-		await Blog.findByIdAndDelete(req.params.id)
-		res.status(204).end()
+		if (!req.token)
+			return res.status(400).json({ error: 'Auth token missing' })
+		const decodedToken = jwt.verify(req.token, SECRET)
+
+		const blog = await Blog.findById(req.params.id)
+		if (!blog)
+			return res.status(404).end()
+
+		if (decodedToken.id === blog.user.toString()) {
+			blog.deleteOne()
+			res.status(204).end()
+		} else {
+			return res.status(401).json({ error: 'Unauthorized' })
+		}
 	}
 	catch (e) {
 		next(e)
