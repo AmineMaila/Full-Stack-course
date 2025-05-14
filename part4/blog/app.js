@@ -18,7 +18,7 @@ mongoose.connect(config.MONGODB_URI)
 
 app.use(express.json())
 app.use(mid.requestLogger)
-app.use(mid.extractAuthToken)
+
 
 app.use('/api/login', loginRouter)
 app.use('/api/users', usersRouter)

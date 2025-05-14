@@ -1,10 +1,10 @@
 POST http://localhost:3003/api/blogs
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImJyZWFkIiwiaWQiOiI2ODI0ODM1MjRiNDI4MmJjMWM5NTA4ZDkiLCJpYXQiOjE3NDcyMjUxNDN9.IMIX1QN18c_vlX1MNWKyJi-SbHQ7Nv9seO5gmB92IvE
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6IkEtQXJvbiIsImlkIjoiNjgyNGIxZWY1NTdmNmEyY2Y0ODM0MjZkIiwiaWF0IjoxNzQ3MjM4MzA1fQ.TvS8OBk4rwvaVgVu2aN9lPhEq4yhng9mocM3sKe_wvI
 
 {
-	"title": "req res HTTP",
-	"author": "AmineMaila",
-	"url": "https://pine-meat-103.notion.site/Walkthrough-of-HTTPS-request-and-response-14abc3b09421804e92b3f2f4764c97c6?pvs=4",
-	"likes": 0
+	"title": "Getting to grips with JavaScript’s prototypal inheritance",
+	"author": "Max Powell",
+	"url": "https://medium.com/@maxfpowell/getting-to-grips-with-javascripts-prototypal-inheritance-d6cd57ddee59",
+	"likes": 50
 }
