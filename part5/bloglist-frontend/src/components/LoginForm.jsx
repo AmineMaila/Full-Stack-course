@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import login from '../services/login'
 import { setToken } from '../services/login'
 
@@ -6,10 +6,21 @@ const LoginForm = ({ setUser }) => {
 	const [username, setUsername] = useState('')
 	const [password, setPassword] = useState('')
 
+	useEffect(() => {
+		const userJSON = window.localStorage.getItem('LoggedInBlogAppUser')
+		if (userJSON) {
+			const user = JSON.parse(userJSON)
+			setUser(user)
+			setToken(user.token)
+		}
+	}, [])
+
 	const handleLogin = async (event) => {
 		event.preventDefault()
 		try {
 			const user = await login({ username, password })
+		
+			window.localStorage.setItem('LoggedInBlogAppUser', JSON.stringify(user))
 			setToken(user.token)
 			setUser(user)
 			setUsername('')

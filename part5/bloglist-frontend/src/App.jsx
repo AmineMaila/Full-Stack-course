@@ -10,7 +10,7 @@ const App = () => {
 			{
 				user === null
 				? <LoginForm setUser={setUser} />
-      	: <BlogPage user={user} />
+      	: <BlogPage user={user} setUser={setUser} />
 			}
     </div>
   )
