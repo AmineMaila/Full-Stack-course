@@ -1,8 +1,9 @@
 import { useEffect, useState } from 'react'
 import login from '../services/login'
 import { setToken } from '../services/blogs'
+import Notification from './Notification.jsx'
 
-const LoginForm = ({ setUser }) => {
+const LoginForm = ({ setUser, notif }) => {
 	const [username, setUsername] = useState('')
 	const [password, setPassword] = useState('')
 
@@ -20,6 +21,11 @@ const LoginForm = ({ setUser }) => {
 		try {
 			const user = await login({ username, password })
 		
+			console.log('test')
+			notif.setSuccessMessage('login successful')
+			setTimeout(() => {
+				notif.setSuccessMessage(null)
+			}, 5000)
 			window.localStorage.setItem('LoggedInBlogAppUser', JSON.stringify(user))
 			setToken(user.token)
 			setUser(user)
@@ -27,14 +33,19 @@ const LoginForm = ({ setUser }) => {
 			setPassword('')
 		}
 		catch (e) {
-			alert(e.response.data.error)
 			console.log(e)
+			notif.setErrorMessage(e.response.data.error)
+			setTimeout(() => {
+				notif.setErrorMessage(null)
+			}, 5000)
 		}
 	}
 
 	return (
 		<>
 			<h1>Log in to application</h1>
+			<Notification message={notif.errorMessage} classname='error notification' />
+			<Notification message={notif.successMessage} classname='success notification' />
 			<form onSubmit={handleLogin}>
 				<div className='username-input'>
 					username

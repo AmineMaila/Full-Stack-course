@@ -1,8 +1,9 @@
 import Blog from './Blog'
 import { useState, useEffect } from 'react'
 import blogService from '../services/blogs'
+import Notification from './Notification'
 
-const BlogPage = ({ user, setUser }) => {
+const BlogPage = ({ user, setUser, notif }) => {
 	const [blogs, setBlogs] = useState([])
 	const [title, setTitle] = useState('')
 	const [author, setAuthor] = useState('')
@@ -24,17 +25,26 @@ const BlogPage = ({ user, setUser }) => {
 
 		try {
 			const response = await blogService.create({ title, author, url })
+			notif.setSuccessMessage(`a new blog ${response.title} by ${response.author} added`)
+			setTimeout(() => {
+				notif.setSuccessMessage(null)
+			}, 5000)
 			setBlogs(blogs.concat(response))
 		}
 		catch (e) {
 			console.error(e)
-			alert('something went wrong')
+			notif.setErrorMessage(e.response.data.error)
+			setTimeout(() => {
+				notif.setErrorMessage(null)
+			}, 5000)
 		}
 	}
 
 	return (
 		<>
 			<h2>blogs</h2>
+			<Notification message={notif.errorMessage} classname='error notification' />
+			<Notification message={notif.successMessage} classname='success notification' />
 			<div>
 				{user.name} logged in
 				<button onClick={handleLogout}>logout</button>
