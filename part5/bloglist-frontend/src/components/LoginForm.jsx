@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import login from '../services/login'
-import { setToken } from '../services/login'
+import { setToken } from '../services/blogs'
 
 const LoginForm = ({ setUser }) => {
 	const [username, setUsername] = useState('')
