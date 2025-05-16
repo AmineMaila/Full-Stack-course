@@ -21,11 +21,7 @@ const LoginForm = ({ setUser, notif }) => {
 		try {
 			const user = await login({ username, password })
 		
-			console.log('test')
-			notif.setSuccessMessage('login successful')
-			setTimeout(() => {
-				notif.setSuccessMessage(null)
-			}, 5000)
+			notif.notifySuccess('login successful')
 			window.localStorage.setItem('LoggedInBlogAppUser', JSON.stringify(user))
 			setToken(user.token)
 			setUser(user)
@@ -34,10 +30,7 @@ const LoginForm = ({ setUser, notif }) => {
 		}
 		catch (e) {
 			console.log(e)
-			notif.setErrorMessage(e.response.data.error)
-			setTimeout(() => {
-				notif.setErrorMessage(null)
-			}, 5000)
+			notif.notifySuccess(e.response.data.error)
 		}
 	}
 

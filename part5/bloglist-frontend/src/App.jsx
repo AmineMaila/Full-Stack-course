@@ -7,21 +7,36 @@ const App = () => {
 	const [successMessage, setSuccessMessage] = useState(null)
 	const [user, setUser] = useState(null)
 
+	const notifyError = (message) => {
+		setErrorMessage(message)
+		setTimeout(() => {
+			setErrorMessage(null)
+		}, 5000)
+	}
+
+	const notifySuccess = (message) => {
+		setSuccessMessage(message)
+		setTimeout(() => {
+			setSuccessMessage(null)
+		}, 5000)
+	}
+
   return (
 		<div>
 			{
 				user === null
 				? <LoginForm setUser={setUser} notif={{
 						errorMessage,
-						setErrorMessage,
+						notifyError,
 						successMessage,
-						setSuccessMessage 
-					}} />
+						notifySuccess 
+						}}
+					/>
       	: <BlogPage user={user} setUser={setUser} notif={{
 						errorMessage,
-						setErrorMessage,
+						notifyError,
 						successMessage,
-						setSuccessMessage 
+						notifySuccess 
 					}} />
 			}
     </div>
